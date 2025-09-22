@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jitsi Meet Entegrasyonu</title>
+    <style>
+        #meet {
+            width: 100%;
+            height: 100vh;
+        }
+
+        #controls {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        #shareLink {
+            display: none;
+            margin: 20px;
+        }
+
+        #sharedLinks {
+            margin: 20px;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="controls">
+        <h1>Danışman ile Görüntülü Arama</h1>
+        <button id="startButton">Görüntülü Aramayı Başlat</button>
+        <div id="shareLink">
+            <p>Bu bağlantıyı karşı tarafa paylaşın:</p>
+            <a id="roomLink" href="#" target="_blank">Bağlantı</a>
+        </div>
+    </div>
+    <div id="meet"></div>
+    <div id="sharedLinks">
+        <h2>Paylaşılan Bağlantılar</h2>
+        <ul id="linksList"></ul>
+    </div>
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+    
+    <script>
+        document.getElementById('startButton').addEventListener('click', () => {
+            const roomName = 'DanismanGorusmesi_' + Math.floor(Math.random() * 1000000); // Benzersiz oda ismi
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: roomName,
+                width: '100%',
+                height: 700,
+                parentNode: document.querySelector('#meet'),
+                lang: 'tr',
+                configOverwrite: { startWithAudioMuted: true },
+                interfaceConfigOverwrite: { TILE_VIEW_MAX_COLUMNS: 2 },
+                userInfo: {
+                    email: 'kullanici@example.com',
+                    displayName: 'Kullanıcı Adı'
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListener('videoConferenceJoined', () => {
+                console.log('Görüntülü arama başlatıldı!');
+            });
+
+            api.addEventListener('readyToClose', () => {
+                console.log('Görüntülü arama sona erdi.');
+            });
+
+            // Oda ismini paylaşmak için URL oluşturma
+            const roomLink = window.location.href.split('?')[0] + '?room=' + roomName;
+            document.getElementById('roomLink').href = roomLink;
+            document.getElementById('roomLink').textContent = roomLink;
+            document.getElementById('shareLink').style.display = 'block';
+
+            // Paylaşılan linki site içinde gösterme
+            const linksList = document.getElementById('linksList');
+            const listItem = document.createElement('li');
+            const linkElement = document.createElement('a');
+            linkElement.href = roomLink;
+            linkElement.textContent = roomLink;
+            linkElement.target = '_blank';
+            listItem.appendChild(linkElement);
+            linksList.appendChild(listItem);
+        });
+
+        // URL'deki oda ismini alarak Jitsi Meet'i başlatma
+        const urlParams = new URLSearchParams(window.location.search);
+        const room = urlParams.get('room');
+        if (room) {
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: room,
+                width: '100%',
+                height: 700,
+                parentNode: document.querySelector('#meet'),
+                lang: 'tr',
+                configOverwrite: { startWithAudioMuted: true },
+                interfaceConfigOverwrite: { TILE_VIEW_MAX_COLUMNS: 2 },
+                userInfo: {
+                    email: 'kullanici@example.com',
+                    displayName: 'Kullanıcı Adı'
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListener('videoConferenceJoined', () => {
+                console.log('Görüntülü arama başlatıldı!');
+            });
+
+            api.addEventListener('readyToClose', () => {
+                console.log('Görüntülü arama sona erdi.');
+            });
+        }
+    </script>
+</body>
+
+</html>

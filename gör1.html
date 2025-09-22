@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GörüntülüArama</title>
+    <link rel="stylesheet" href="mp1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://kit.fontawesome.com/fa971e1ee1.js" crossorigin="anonymous"></script>
+    <style>
+          body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url(../mp/img/SISPL-Clipart-1-e1654233725792-1024x580.webp); /* Buraya kendi resim URL'inizi ekleyin */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #meet {
+            width: 100%;
+            height: 50vh;
+            background-color: rgb(238, 195, 216);
+        }
+
+        #controls {
+            margin: 200px;
+            text-align: center;
+            background-color: rgb(49, 37, 37);
+            /* Kontrollerin okunabilirliğini artırmak için arka plan ekleyin */
+            padding: 50px;
+            border-radius: 10px;
+            
+        }
+
+        h1 {
+            margin: 0;
+            padding-bottom: 20px;
+        }
+    </style>
+
+
+
+</head>
+
+
+<body>
+    <div id="controls">
+        <h1>Danışman ile Görüntülü Arama</h1>
+        <button id="startButton">Görüntülü Aramayı Başlat</button>
+
+    </div>
+
+    <div id="meet"></div>
+
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+
+    <script>
+        document.getElementById('startButton').addEventListener('click', () => {
+            const roomName = 'DanismanGorusmesi_' + Math.floor(Math.random() * 1000000); // Benzersiz oda ismi
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: roomName,
+                width: '100%',
+                height: 700,
+                parentNode: document.querySelector('#meet'),
+                lang: 'tr',
+                configOverwrite: {
+                    startWithAudioMuted: true
+                },
+                interfaceConfigOverwrite: {
+                    TILE_VIEW_MAX_COLUMNS: 2
+                },
+                userInfo: {
+                    email: 'kullanici@example.com',
+                    displayName: 'Kullanıcı Adı'
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListener('videoConferenceJoined', () => {
+                console.log('Görüntülü arama başlatıldı!');
+            });
+
+            api.addEventListener('readyToClose', () => {
+                console.log('Görüntülü arama sona erdi.');
+            });
+
+            // Oda ismini paylaşmak için URL oluşturma
+            const roomLink = window.location.href.split('?')[0] + '?room=' + roomName;
+            document.getElementById('roomLink').href = roomLink;
+            document.getElementById('roomLink').textContent = roomLink;
+            document.getElementById('shareLink').style.display = 'block';
+        });
+
+        // URL'deki oda ismini alarak Jitsi Meet'i başlatma
+        const urlParams = new URLSearchParams(window.location.search);
+        const room = urlParams.get('room');
+        if (room) {
+            const domain = 'meet.jit.si';
+            const options = {
+                roomName: room,
+                width: '100%',
+                height: 700,
+                parentNode: document.querySelector('#meet'),
+                lang: 'tr',
+                configOverwrite: {
+                    startWithAudioMuted: true
+                },
+                interfaceConfigOverwrite: {
+                    TILE_VIEW_MAX_COLUMNS: 2
+                },
+                userInfo: {
+                    email: 'kullanici@example.com',
+                    displayName: 'Kullanıcı Adı'
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListener('videoConferenceJoined', () => {
+                console.log('Görüntülü arama başlatıldı!');
+            });
+
+            api.addEventListener('readyToClose', () => {
+                console.log('Görüntülü arama sona erdi.');
+            });
+        }
+    </script>
+   
+</body>
+
+</html>
